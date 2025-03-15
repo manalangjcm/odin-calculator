@@ -5,8 +5,8 @@ const inputContainer = document.querySelector("#input-container");
 // Calculator Data
 let inputData = {
     operator: null,
-    operandA: null,
-    operandB: null
+    operandA: 0,
+    operandB: 0
 };
 
 let outputTextCached = [];
@@ -34,13 +34,14 @@ function onClick(target) {
             if (inputData.operator === null) {
                 inputData.operator = target.value;
 
-                if (inputData.operandA === null) {
+                if (inputData.operandA === 0) {
                     inputData.operandA = outputTextCached.join('');
                     outputTextCached = [];
                 }
             } else {
-                if (inputData.operandA !== null && inputData.operandB === null) {
+                if (inputData.operandA !== 0 && inputData.operandB === 0) {
                     inputData.operandB = outputTextCached.join('');
+                    outputTextCached = [];
 
                     operate(inputData);
                 }
@@ -55,9 +56,16 @@ function onClick(target) {
 
         case "decimal": {
             if (outputTextCached.includes(".")) break;
-            
-            outputText.textContent += ".";
+
+            if (isOutputZero()) {
+                outputText.textContent = "0.";
+                outputTextCached.push(0);
+            } else {
+                outputText.textContent += ".";
+            }
+
             outputTextCached.push(".");
+            console.log(outputTextCached);
 
             break;
         }
@@ -73,7 +81,7 @@ function onClick(target) {
         }
 
         case "equal": {
-            if (outputTextCached.length > 0 && inputData.operandB === null) {
+            if (outputTextCached.length > 0 && inputData.operandB === 0) {
                 inputData.operandB = outputTextCached.join('');
             }
 
@@ -95,14 +103,13 @@ function insertToOutput(value) {
     }
     
     outputTextCached.push(value);
-    console.log(outputTextCached);
 }
 
 function clear() {
     inputData = {
         operator: null,
-        operandA: null,
-        operandB: null
+        operandA: 0,
+        operandB: 0
     }
 
     outputText.textContent = 0;
@@ -124,10 +131,9 @@ function backspace() {
 function operate(inputData) {
     if (inputData.operator === null) return;
     
-    console.log(inputData);
-
     const operandA = Number(inputData.operandA);
     const operandB = Number(inputData.operandB) === 0 ? operandA : Number(inputData.operandB);
+    console.log(inputData);
 
     let result = 0;
 
@@ -157,13 +163,11 @@ function operate(inputData) {
 
     inputData.operator = null;
     inputData.operandA = result;
-    inputData.operandB = null;
+    inputData.operandB = 0;
     
     outputTextCached = [];
 
     console.log(`${operandA} ${inputData.operator} ${operandB} = ${result}`);
-
-    console.log(inputData);
 }
 
 // Math Operation Functions
