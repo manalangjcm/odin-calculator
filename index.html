@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Odin Calculator</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@100..900&display=swap" rel="stylesheet">
+    <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+    <main>
+        <div id="container" class="container">
+            <div class="output-container">
+                <p id="output-container__text" class="output-container__text">0</p>
+            </div>
+            <div id="input-container" class="input-container">
+                <button class="clear-button" data-input="clear">C</button>
+                <button data-input="sign">+/-</button>
+                <button data-input="percent">%</button>
+                <button class="operator-button" data-input="divide">/</button>
+                <button data-input="operand" value="7">7</button>
+                <button data-input="operand" value="8">8</button>
+                <button data-input="operand" value="9">9</button>
+                <button class="operator-button" data-input="multiply">x</button>
+                <button data-input="operand" value="4">4</button>
+                <button data-input="operand" value="5">5</button>
+                <button data-input="operand" value="6">6</button>
+                <button class="operator-button" data-input="subtract">-</button>
+                <button data-input="operand" value="1">1</button>
+                <button data-input="operand" value="2">2</button>
+                <button data-input="operand" value="3">3</button>
+                <button class="operator-button" data-input="add">+</button>
+                <button data-input="operand" value="0">0</button>
+                <button data-input="decimal">.</button>
+                <button class="backspace-button" data-input="backspace">
+                    <img src="assets/svg/backspace.svg" alt="Backspace">
+                </button>
+                <button class="equal-button" data-input="equal">=</button>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
