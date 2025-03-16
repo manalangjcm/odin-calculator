@@ -18,6 +18,12 @@ inputContainer.addEventListener("click", event => {
     }
 });
 
+// Keyboard Support
+window.addEventListener("keydown", event => {
+    const clickedButton = document.querySelector(`#input-container button[data-key='${event.key}']`);
+    if (clickedButton !== null) clickedButton.click();
+});
+
 function handleButtonClick(target) {
     const dataInput = target.getAttribute("data-input");
     const value = target.value;
