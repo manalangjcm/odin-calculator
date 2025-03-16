@@ -8,8 +8,11 @@ Live Demo: https://manalangjcm.github.io/odin-calculator/
 
 Features:
 - Perform basic arithmetic operations (add, subtract, multiply, divide).
+- Add decimal on operands.
+- Toggle operand signs (positive or negative).
 - Clear button to reset calculations.
-- Error handling for invalid operations.
+- Backspace to remove last input from operands.
+- Error handling for invalid operations (🥚).
 - Keyboard support.
 
 Built with:
