@@ -28,7 +28,8 @@ function handleButtonClick(target) {
         case "decimal": addDecimal(); break;
         case "equal": operate(inputData); break;
         case "operand": addDigit(value); break;
-        case "operator": setOperator(value); break;
+        case "operator": setOperator(target); break;
+        case "percent": percentage(); break;
         case "sign": toggleSign(); break;
     }
 }
@@ -58,9 +59,9 @@ function addDigit(value) {
     outputTextCached.push(value);
 }
 
-function setOperator(value) {
+function setOperator(target) {
     if (inputData.operator === null) {
-        inputData.operator = value;
+        inputData.operator = target.value;
 
         if (inputData.operandA === 0) {
             inputData.operandA = outputTextCached.join('');
@@ -74,7 +75,7 @@ function setOperator(value) {
             operate(inputData);
         }
 
-        inputData.operator = value;
+        inputData.operator = target.value;
     }
 }
 
@@ -92,11 +93,8 @@ function operate(inputData) {
     // Easter egg - dividing 0 and 0
     if ((operandA === 0 && operandB === 0) && operator === "divide") {
         window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-
+        resetCalculator();        
         outputText.textContent = "why...";
-
-        resetCalculator();
-
         return;
     }
 
@@ -118,10 +116,18 @@ function operate(inputData) {
     outputTextCached = [];
 }
 
+function percentage() {
+    if (isOutputZero()) return;
+
+    const percentageValue = Number(outputTextCached.join('')) / 100;
+    outputTextCached = Array.from(percentageValue.toString().split(''));
+    outputText.textContent = outputTextCached.join('').substring(0, 9);
+}
+
 function toggleSign() {
     if (isOutputZero()) {
         // If current textContent has a number other than zero, allow toggling sign
-        if (!outputText.textContent !== "0") {
+        if (outputText.textContent !== "0") {
             outputTextCached = Array.from(outputText.textContent.toString().split(''));
         } else {
             return;
