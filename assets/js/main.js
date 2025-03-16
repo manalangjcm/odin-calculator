@@ -11,91 +11,44 @@ let inputData = {
 
 let outputTextCached = [];
 
+// Event Listener
 inputContainer.addEventListener("click", event => {
     if (event.target.tagName === "BUTTON") {
-        onClick(event.target);
+        handleButtonClick(event.target);
     }
 });
 
-function onClick(target) {
+function handleButtonClick(target) {
     const dataInput = target.getAttribute("data-input");
+    const value = target.value;
 
     switch (dataInput) {
-        case "operand": {
-            if (outputTextCached.length >= 9) break;
-
-            const operandValue = Number(target.value);
-            
-            insertToOutput(operandValue);
-            break;
-        }
-
-        case "operator": {
-            if (inputData.operator === null) {
-                inputData.operator = target.value;
-
-                if (inputData.operandA === 0) {
-                    inputData.operandA = outputTextCached.join('');
-                    outputTextCached = [];
-                }
-            } else {
-                if (inputData.operandA !== 0 && inputData.operandB === 0) {
-                    inputData.operandB = outputTextCached.join('');
-                    outputTextCached = [];
-
-                    operate(inputData);
-                }
-
-                inputData.operator = target.value;
-            }
-
-            console.log("Operator clicked!");
-
-            break;
-        }
-
-        case "decimal": {
-            if (outputTextCached.includes(".")) break;
-
-            if (isOutputZero()) {
-                outputText.textContent = "0.";
-                outputTextCached.push(0);
-            } else {
-                outputText.textContent += ".";
-            }
-
-            outputTextCached.push(".");
-            console.log(outputTextCached);
-
-            break;
-        }
-
-        case "clear": {
-            clear();
-            break;
-        }
-
-        case "backspace": {
-            backspace();
-            break;
-        }
-
-        case "equal": {
-            if (outputTextCached.length > 0 && inputData.operandB === 0) {
-                inputData.operandB = outputTextCached.join('');
-            }
-
-            operate(inputData);
-            break;
-        }
+        case "clear": resetCalculator(); break;
+        case "backspace": removeLastDigit(); break;
+        case "decimal": addDecimal(); break;
+        case "equal": operate(inputData); break;
+        case "operand": addDigit(value); break;
+        case "operator": setOperator(value); break;
+        case "sign": toggleSign(); break;
     }
 }
 
-function isOutputZero() {
-    return outputTextCached.length <= 0 || outputText.textContent == "0";
+function addDecimal() {
+    if (outputTextCached.includes(".")) return;
+
+    if (isOutputZero()) {
+        outputText.textContent = "0.";
+        outputTextCached.push(0);
+    } else {
+        outputText.textContent += ".";
+    }
+
+    outputTextCached.push(".");
 }
 
-function insertToOutput(value) {
+function addDigit(value) {
+    if (outputTextCached.length >= 9) return;
+
     if (isOutputZero()) {
         outputText.textContent = value;
     } else {
@@ -105,84 +58,108 @@ function insertToOutput(value) {
     outputTextCached.push(value);
 }
 
-function clear() {
+function setOperator(value) {
+    if (inputData.operator === null) {
+        inputData.operator = value;
+
+        if (inputData.operandA === 0) {
+            inputData.operandA = outputTextCached.join('');
+            outputTextCached = [];
+        }
+    } else {
+        if (inputData.operandA !== 0 && inputData.operandB === 0) {
+            inputData.operandB = outputTextCached.join('');
+            outputTextCached = [];
+
+            operate(inputData);
+        }
+
+        inputData.operator = value;
+    }
+}
+
+function operate(inputData) {
+    if (outputTextCached.length > 0 && inputData.operandB === 0) {
+        inputData.operandB = outputTextCached.join('');
+    }
+
+    if (inputData.operator === null) return;
+    
+    const operator = inputData.operator;
+    const operandA = Number(inputData.operandA);
+    const operandB = Number(inputData.operandB) === 0 ? operandA : Number(inputData.operandB);
+
+    // Easter egg - dividing 0 and 0
+    if ((operandA === 0 && operandB === 0) && operator === "divide") {
+        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+
+        outputText.textContent = "why...";
+
+        resetCalculator();
+
+        return;
+    }
+
+    let result = 0;
+    switch (operator) {
+        case "add": result = operandA + operandB; break;
+        case "subtract": result = operandA - operandB; break;
+        case "multiply": result = operandA * operandB; break;
+        case "divide": result = operandA / operandB; break;
+    }
+
+    const roundResult = round(result, 15);
+    outputText.textContent = roundResult.toString().slice(0, 9);
+
+    inputData.operator = null;
+    inputData.operandA = roundResult;
+    inputData.operandB = 0;
+
+    outputTextCached = [];
+}
+
+function toggleSign() {
+    if (isOutputZero()) {
+        // If current textContent has a number other than zero, allow toggling sign
+        if (!outputText.textContent !== "0") {
+            outputTextCached = Array.from(outputText.textContent.toString().split(''));
+        } else {
+            return;
+        }
+    }
+
+    if (!outputTextCached.includes("-")) {
+        outputTextCached.unshift("-");
+    } else {
+        outputTextCached.shift();
+    }
+
+    outputText.textContent = outputTextCached.join('').substring(0, 9);
+}
+
+// Helper Functions
+function isOutputZero() {
+    return outputTextCached.length === 0 || outputText.textContent === "0";
+}
+
+function removeLastDigit() {
+    outputTextCached.pop();
+    outputText.textContent = outputTextCached.length ? outputTextCached.join('') : "0";
+}
+
+function resetCalculator() {
     inputData = {
         operator: null,
         operandA: 0,
         operandB: 0
     }
 
-    outputText.textContent = 0;
     outputTextCached = [];
+    outputText.textContent = 0;
 
     console.clear();
 }
 
-function backspace() {
-    outputTextCached.pop();
-
-    if (outputTextCached.length > 0) {
-        outputText.textContent = outputTextCached.join('');
-    } else {
-        outputText.textContent = 0;
-    }
-}
-
-function operate(inputData) {
-    if (inputData.operator === null) return;
-    
-    const operandA = Number(inputData.operandA);
-    const operandB = Number(inputData.operandB) === 0 ? operandA : Number(inputData.operandB);
-    console.log(inputData);
-
-    let result = 0;
-
-    switch (inputData.operator) {
-        case "add": {
-            result = add(operandA, operandB);
-            break;
-        }
-
-        case "subtract": {
-            result = subtract(operandA, operandB);
-            break;
-        }
-
-        case "multiply": {
-            result = multiply(operandA, operandB);
-            break;
-        }
-
-        case "divide": {
-            result = divide(operandA, operandB);
-            break;
-        }
-    }
-    
-    outputText.textContent = result;
-
-    inputData.operator = null;
-    inputData.operandA = result;
-    inputData.operandB = 0;
-    
-    outputTextCached = [];
-
-    console.log(`${operandA} ${inputData.operator} ${operandB} = ${result}`);
-}
-
-// Math Operation Functions
-function add(a, b) {
-    return a + b;
-}
-
-function subtract(a, b) {
-    return a - b;
-}
-
-function multiply(a, b) {
-    return a * b;
-}
-
-function divide(a, b) {
-    return a / b;
+function round(number, decimals) {
+    return parseFloat(Math.round(number + 'e' + decimals) + 'e-' + decimals);
 }
