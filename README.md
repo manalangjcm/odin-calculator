@@ -4,7 +4,7 @@ A simple yet functional online calculator built as part of [The Odin Project](ht
 
 [Course Project Link](https://www.theodinproject.com/lessons/foundations-calculator)
 
-[Live Demo](https://jramedev.github.io/odin-calculator/)
+[Live Demo](https://manalangjcm.github.io/odin-calculator/)
 
 Features:
 - Perform basic arithmetic operations (add, subtract, multiply, divide).
